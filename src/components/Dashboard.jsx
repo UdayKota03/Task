@@ -4,6 +4,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 const Dashboard = () => {
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu
 
   const getTitle = () => {
     switch (location.pathname) {
@@ -28,14 +29,12 @@ const Dashboard = () => {
               <li>Interests Received: 10</li>
               <li>Interests Sent: 7</li>
             </ul>
-
             <h3 className="text-lg font-semibold mt-6">Recent Activity</h3>
             <ul className="list-disc pl-5 mt-2">
               <li>John Doe showed interest in your profile.</li>
               <li>You sent an interest to Jane Smith.</li>
               <li>Your profile was viewed 15 times this week.</li>
             </ul>
-
             <h3 className="text-lg font-semibold mt-6">User Statistics</h3>
             <div className="grid grid-cols-2 gap-4 mt-2">
               <div className="bg-blue-100 p-4 rounded-lg shadow">
@@ -80,31 +79,78 @@ const Dashboard = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen); // Toggle mobile menu
+  };
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-      <aside className="w-full lg:w-64 bg-gray-800 text-white p-4 fixed h-full">
+      {/* Mobile Menu */}
+      <header className="bg-gray-800 text-white p-4 lg:hidden flex justify-between items-center">
+        <h2 className="text-xl font-bold">Zepto</h2>
+        <button onClick={toggleMenu} className="text-white">
+          {isMenuOpen ? 'Close Menu' : 'Open Menu'}
+        </button>
+      </header>
+
+      {isMenuOpen && (
+        <nav className="bg-gray-800 text-white p-4 lg:hidden">
+          <ul>
+            <li className="mb-4">
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) => `block py-2 px-4 rounded ${isActive ? 'bg-gray-700' : ''}`}
+                onClick={toggleMenu}
+              >
+                Dashboard
+              </NavLink>
+            </li>
+            <li className="mb-4">
+              <NavLink
+                to="/dashboard/profile"
+                className={({ isActive }) => `block py-2 px-4 rounded ${isActive ? 'bg-gray-700' : ''}`}
+                onClick={toggleMenu}
+              >
+                Profile
+              </NavLink>
+            </li>
+            <li className="mb-4">
+              <NavLink
+                to="/dashboard/settings"
+                className={({ isActive }) => `block py-2 px-4 rounded ${isActive ? 'bg-gray-700' : ''}`}
+                onClick={toggleMenu}
+              >
+                Settings
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+      )}
+
+      {/* Sidebar for larger screens */}
+      <aside className="hidden lg:block lg:w-64 bg-gray-800 text-white p-4 fixed h-full">
         <h2 className="text-xl font-bold mb-4 text-center">Zepto</h2>
         <nav>
           <ul>
             <li className="mb-4">
-              <NavLink 
-                to="/dashboard" 
+              <NavLink
+                to="/dashboard"
                 className={({ isActive }) => `block py-2 px-4 rounded ${isActive ? 'bg-gray-700' : ''}`}
               >
                 Dashboard
               </NavLink>
             </li>
             <li className="mb-4">
-              <NavLink 
-                to="/dashboard/profile" 
+              <NavLink
+                to="/dashboard/profile"
                 className={({ isActive }) => `block py-2 px-4 rounded ${isActive ? 'bg-gray-700' : ''}`}
               >
                 Profile
               </NavLink>
             </li>
             <li className="mb-4">
-              <NavLink 
-                to="/dashboard/settings" 
+              <NavLink
+                to="/dashboard/settings"
                 className={({ isActive }) => `block py-2 px-4 rounded ${isActive ? 'bg-gray-700' : ''}`}
               >
                 Settings
@@ -114,7 +160,8 @@ const Dashboard = () => {
         </nav>
       </aside>
 
-      <main className="flex-grow p-8 bg-gray-100 ml-64">
+      {/* Main Content Area */}
+      <main className="flex-grow p-4 lg:p-8 bg-gray-100 ml-0 lg:ml-64">
         <header className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">{getTitle()}</h1>
           <div className="relative">
@@ -131,8 +178,8 @@ const Dashboard = () => {
         <Outlet />
 
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-md">
               <h2 className="text-xl font-semibold mb-4">User Profile</h2>
               <p><strong>Name:</strong> Uday Kota</p>
               <p><strong>Email:</strong> udaykota4u@gmail.com</p>
